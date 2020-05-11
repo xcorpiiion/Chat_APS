@@ -1,10 +1,11 @@
-package model;
+package servidor;
 
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import model.TratamentodeMensagem;
 /**
  *
  * @author Lais
