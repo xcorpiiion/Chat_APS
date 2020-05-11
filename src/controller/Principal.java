@@ -6,9 +6,7 @@
 package controller;
 //import static javax.swing.JOptionPane.PLAIN_MESSAGE;
 //import static javax.swing.JOptionPane.showInputDialog;
-import java.io.IOException;
 import static javax.swing.JOptionPane.*;
-import model.Servidor;
 import view.Chat;
 
 /**

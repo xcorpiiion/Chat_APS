@@ -5,7 +5,7 @@
  */
 package controller;
 
-import model.Servidor;
+import servidor.Servidor;
 
 /**
  *

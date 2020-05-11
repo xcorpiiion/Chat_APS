@@ -17,11 +17,11 @@ import java.util.ArrayList;
  */
 public class TratamentodeMensagem {
     
-    private Socket s;
+    private Socket socket;
     private ArrayList<PrintStream> clientes;
     
-    public TratamentodeMensagem(Socket s, ArrayList<PrintStream> clientes ){
-        setS(s);
+    public TratamentodeMensagem(Socket socket, ArrayList<PrintStream> clientes ){
+        setSocket(socket);
         setClientes(clientes);
         Thread();
     }
@@ -33,7 +33,7 @@ public class TratamentodeMensagem {
            public void run() {
                 String mensagem = "";
                      try{
-                        InputStreamReader irs = new InputStreamReader(s.getInputStream());
+                        InputStreamReader irs = new InputStreamReader(socket.getInputStream());
                             BufferedReader br = new BufferedReader (irs);
                                  while((mensagem = br.readLine())!= null){
                                     enviarMensagem(mensagem);
@@ -58,15 +58,15 @@ public class TratamentodeMensagem {
     /**
      * @return the s
      */
-    public Socket getS() {
-        return s;
+    public Socket getSocket() {
+        return socket;
     }
 
     /**
      * @param s the s to set
      */
-    public void setS(Socket s) {
-        this.s = s;
+    public void setSocket(Socket socket) {
+        this.socket = socket;
     }
 
     
