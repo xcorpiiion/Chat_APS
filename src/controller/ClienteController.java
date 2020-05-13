@@ -13,7 +13,7 @@ import view.Chat;
  *
  * @author Lais
  */
-public class Principal {
+public class ClienteController {
     
     public static void main(String[] args){
         
