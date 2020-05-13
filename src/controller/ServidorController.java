@@ -11,7 +11,7 @@ import servidor.Servidor;
  *
  * @author VITOR
  */
-public class PrincipalServidor {
+public class ServidorController {
      public static void main (String[] args){
          Servidor server = new Servidor(5000);
          server.rodarServer();
