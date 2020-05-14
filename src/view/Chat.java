@@ -1,9 +1,7 @@
 
 package view;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.*;
 import static javax.swing.JOptionPane.*;
@@ -15,70 +13,14 @@ import static javax.swing.JOptionPane.*;
  */
 public class Chat extends javax.swing.JFrame {
     
-    private String nome;
-    private Socket s;
-    private BufferedReader br;
-    private InputStreamReader is;
+    public String nome;
+    public Socket socket;
    
     
    
-    public Chat(String nome) {
-        
+    public Chat() {       
         initComponents();
-        this.nome = nome;
-      
-        
-        try{
-        s = new Socket("127.0.0.1",5000);
-        }
-        catch(IOException exp){
-            showMessageDialog(null, "Servidor não conectado", "", ERROR_MESSAGE);
-            System.exit(0);
-        }
-       Thread();
-    }
-    private void Thread(){
-        Thread t = new Thread(new Runnable() {
-            
-            String mensagem;
-            
-            @Override
-            public void run() {
-                
-                try{
-                   is = new InputStreamReader(s.getInputStream());
-                   br = new BufferedReader(is);
-                   
-                    while ((mensagem = br.readLine()) != null){
-                            txMensagemRecebida.setText(txMensagemRecebida.getText()+ mensagem + "\n");
-                    }
-                }catch(IOException ex){
-                    showMessageDialog (null, "Erro na conexão com o servidor", "", ERROR_MESSAGE);
-                    
-                
-            }
-            }
-        
-            
-        });
-        t.start();
-    }
-    
-    public void enviarMensagem(){
-        String mensagem = getNome() + " diz: ";
-        try{
-            PrintStream ps = new PrintStream(s.getOutputStream());
-            mensagem += txMensagemEnviar.getText();
-            ps.println(mensagem);
-            ps.flush();
-            txMensagemEnviar.setText("");
-
-        }catch (IOException ex){
-            showMessageDialog(null, "Mensagem não foi enviada", "", ERROR_MESSAGE);
-        }
-    }
-
-    
+    }    
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -165,12 +107,30 @@ public class Chat extends javax.swing.JFrame {
 
     private void btSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSairActionPerformed
             try {
-                s.close();
+                socket.close();
             } catch (IOException ex) {
             } 
     }//GEN-LAST:event_btSairActionPerformed
   
+    //esse método será alterado na implementação do Banco de Dados
+    private void enviarMensagem(){
+        String mensagem = this.nome + " diz: ";
+        try{
+            PrintStream ps = new PrintStream(socket.getOutputStream());
+            mensagem += txMensagemEnviar.getText();
+            ps.println(mensagem);
+            ps.flush();
+            txMensagemEnviar.setText("");
 
+        }catch (IOException ex){
+            showMessageDialog(null, "Mensagem não foi enviada", "", ERROR_MESSAGE);
+        }
+    }
+    
+    //esse método será alterado na implementação do Banco de Dados
+    public void mensagens(String mensagem){
+        txMensagemRecebida.setText(txMensagemRecebida.getText()+ mensagem + "\n");
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btEnviar;
@@ -181,17 +141,4 @@ public class Chat extends javax.swing.JFrame {
     private javax.swing.JTextArea txMensagemRecebida;
     // End of variables declaration//GEN-END:variables
 
-    /**
-     * @return the nome
-     */
-    public String getNome() {
-        return nome;
-    }
-
-    /**
-     * @param nome the nome to set
-     */
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 }
