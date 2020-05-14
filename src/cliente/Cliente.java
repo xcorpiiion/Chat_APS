@@ -1,15 +1,39 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cliente;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
 
 /**
  *
- * @author VITOR
+ * 
  */
 public class Cliente {
-   
+    
+    private ArrayList<PrintStream> clientes;
+    
+    public Cliente(){
+    }
+    
+    public Cliente(ArrayList<PrintStream> clientes){
+        setClientes(clientes);
+    }
+    
+    public void enviarMensagem(String mensagem){
+        
+        for(int a = 0; a < getClientes().size(); a++ ){
+            getClientes().get(a).println(mensagem);
+            getClientes().get(a).flush();
+        }
+    }    
+    
+    //@return the clientes
+    public ArrayList<PrintStream> getClientes() {
+        return clientes;
+    }
+    
+    //@param clientes the clientes to set
+    public void setClientes(ArrayList<PrintStream> clientes) {
+        this.clientes = clientes;
+    }
     
 }

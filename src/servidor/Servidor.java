@@ -1,11 +1,12 @@
 package servidor;
 
+import cliente.Cliente;
+import controller.ServidorController;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import model.TratamentodeMensagem;
 /**
  *
  * @author Lais
@@ -29,7 +30,9 @@ public class Servidor{
                 while(true){
                     socket = soc.accept();      
                        clientes.add(new PrintStream(socket.getOutputStream()));
-                       TratamentodeMensagem mensagem = new TratamentodeMensagem (socket, clientes);
+                       Cliente cliente = new Cliente(clientes);
+                       ServidorController controller = new ServidorController();
+                       controller.threadServidor(socket, cliente);
                        
                 }
             } catch (IOException ex){
