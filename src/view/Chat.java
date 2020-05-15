@@ -13,8 +13,8 @@ import static javax.swing.JOptionPane.*;
  */
 public class Chat extends javax.swing.JFrame {
     
-    public String nome;
-    public Socket socket;
+    private String nome;
+    private Socket socket;
    
     
    
@@ -107,16 +107,16 @@ public class Chat extends javax.swing.JFrame {
 
     private void btSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSairActionPerformed
             try {
-                socket.close();
+                getSocket().close();
             } catch (IOException ex) {
             } 
     }//GEN-LAST:event_btSairActionPerformed
   
     //esse método será alterado na implementação do Banco de Dados
     private void enviarMensagem(){
-        String mensagem = this.nome + " diz: ";
+        String mensagem = this.getNome() + " diz: ";
         try{
-            PrintStream ps = new PrintStream(socket.getOutputStream());
+            PrintStream ps = new PrintStream(getSocket().getOutputStream());
             mensagem += txMensagemEnviar.getText();
             ps.println(mensagem);
             ps.flush();
@@ -131,6 +131,8 @@ public class Chat extends javax.swing.JFrame {
     public void mensagens(String mensagem){
         txMensagemRecebida.setText(txMensagemRecebida.getText()+ mensagem + "\n");
     }
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btEnviar;
@@ -140,5 +142,34 @@ public class Chat extends javax.swing.JFrame {
     private javax.swing.JTextArea txMensagemEnviar;
     private javax.swing.JTextArea txMensagemRecebida;
     // End of variables declaration//GEN-END:variables
+
+    //gets e sets temporários até a implementação do banco de dados
+    /**
+     * @return the nome
+     */
+    public String getNome() {
+        return nome;
+    }
+
+    /**
+     * @param nome the nome to set
+     */
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    /**
+     * @return the socket
+     */
+    public Socket getSocket() {
+        return socket;
+    }
+
+    /**
+     * @param socket the socket to set
+     */
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
 
 }
