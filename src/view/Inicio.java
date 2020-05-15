@@ -76,7 +76,7 @@ public class Inicio extends javax.swing.JFrame {
         chat.setVisible(true);
         Usuario usuario = new Usuario();
         usuario.setNome(tfNome.getText());
-        chat.nome = usuario.getNome();
+        chat.setNome(usuario.getNome());
         ClienteController controller = new ClienteController();
         controller.iniciarConexao(chat);
     }
