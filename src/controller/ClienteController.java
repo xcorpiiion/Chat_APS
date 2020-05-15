@@ -40,7 +40,7 @@ public class ClienteController {
         }
         Thread();
         setChat(chat);
-        getChat().socket = socket; //função temporária até a implementação do Banco de dados
+        getChat().setSocket(socket); //função temporária até a implementação do Banco de dados
     }
     
     private void Thread(){
