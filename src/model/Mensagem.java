@@ -5,59 +5,51 @@
  */
 package model;
 
-import java.util.Date;
-
 /**
  *
  * @author Jéssica
  */
 public class Mensagem {
-    
-    private String mensagem;
-    
-    private Usuario usuario;
-    
-    private Date data;
 
-    /**
-     * @return the mensagem
-     */
-    public String getMensagem() {
-        return mensagem;
-    }
+	private String mensagem;
 
-    /**
-     * @param mensagem the mensagem to set
-     */
-    public void setMensagem(String mensagem) {
-        this.mensagem = mensagem;
-    }
+	private String usuario;
 
-    /**
-     * @return the usuario
-     */
-    public Usuario getUsuario() {
-        return usuario;
-    }
+	public Mensagem(String mensagem, String usuario) {
+		setMensagem(mensagem);
+		setUsuario(usuario);
+	}
 
-    /**
-     * @param usuario the usuario to set
-     */
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
+	/**
+	 * @return the mensagem
+	 */
+	public String getMensagem() {
+		return mensagem;
+	}
 
-    /**
-     * @return the data
-     */
-    public Date getData() {
-        return data;
-    }
+	/**
+	 * @param mensagem the mensagem to set
+	 */
+	public void setMensagem(String mensagem) {
+		this.mensagem = mensagem;
+	}
 
-    /**
-     * @param data the data to set
-     */
-    public void setData(Date data) {
-        this.data = data;
-    }
+	/**
+	 * @return the usuario
+	 */
+	public String getUsuario() {
+		return usuario;
+	}
+
+	/**
+	 * @param usuario the usuario to set
+	 */
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	@Override
+	public String toString() {
+		return usuario + " diz: " + mensagem;
+	}
 }
