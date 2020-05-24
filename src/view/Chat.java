@@ -1,10 +1,16 @@
 
 package view;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.showMessageDialog;
+
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.*;
-import static javax.swing.JOptionPane.*;
+import java.net.Socket;
+import java.util.List;
+
+import dao.MensagensDao;
+import model.Mensagem;
 
 
 /**
@@ -14,9 +20,7 @@ import static javax.swing.JOptionPane.*;
 public class Chat extends javax.swing.JFrame {
     
     private String nome;
-    private Socket socket;
-   
-    
+    private Socket socket;    
    
     public Chat() {       
         initComponents();
@@ -162,25 +166,30 @@ public class Chat extends javax.swing.JFrame {
             } 
     }//GEN-LAST:event_btSairActionPerformed
   
-    //esse método será alterado na implementação do Banco de Dados
-    private void enviarMensagem(){
-        String mensagem = this.getNome() + " diz: ";
-        try{
-            PrintStream ps = new PrintStream(getSocket().getOutputStream());
-            mensagem += txMensagemEnviar.getText();
-            ps.println(mensagem);
-            ps.flush();
-            txMensagemEnviar.setText("");
-
-        }catch (IOException ex){
-            showMessageDialog(null, "Mensagem não foi enviada", "", ERROR_MESSAGE);
-        }
-    }
+    private void enviarMensagem() {
+		String mensagem = null;
+		try {
+			PrintStream ps = new PrintStream(getSocket().getOutputStream());
+			mensagem = txMensagemEnviar.getText();
+			ps.println(mensagem);
+			ps.flush();
+			Mensagem message = new Mensagem(mensagem, getNome());
+			int teste = MensagensDao.getInstance().create(message);
+			if (teste > 0) {
+				txMensagemEnviar.setText("");
+			}
+		} catch (IOException ex) {
+			showMessageDialog(null, "Mensagem não foi enviada", "", ERROR_MESSAGE);
+		}
+	}
     
-    //esse método será alterado na implementação do Banco de Dados
-    public void mensagens(String mensagem){
-        txMensagemRecebida.setText(txMensagemRecebida.getText()+ mensagem + "\n");
-    }
+	public void mensagens() {
+		List<Mensagem> mensagens = MensagensDao.getInstance().read();
+		txMensagemRecebida.setText("");
+		for (Mensagem mensagem : mensagens) {
+			txMensagemRecebida.setText(txMensagemRecebida.getText() + "\n" + mensagem.toString());
+		}
+	}
     
     
 
