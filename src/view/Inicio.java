@@ -7,9 +7,6 @@ package view;
 
 import controller.ClienteController;
 import dao.UsuarioDAO;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.showMessageDialog;
 import model.Usuario;
