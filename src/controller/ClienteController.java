@@ -5,13 +5,19 @@
  */
 package controller;
 
-//import static javax.swing.JOptionPane.PLAIN_MESSAGE;
-//import static javax.swing.JOptionPane.showInputDialog;
-import java.io.BufferedReader;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.showMessageDialog;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.Socket;
-import static javax.swing.JOptionPane.*;
+
+import dao.MensagensDao;
+import model.Arquivo;
+import model.Mensagem;
 import view.Chat;
 import view.Inicio;
 
@@ -39,7 +45,7 @@ public class ClienteController {
 		}
 		Thread();
 		setChat(chat);
-		getChat().setSocket(socket); // função temporária até a implementação do Banco de dados
+		getChat().setSocket(socket);
 	}
 
 	private void Thread() {
@@ -49,13 +55,29 @@ public class ClienteController {
 			public void run() {
 
 				try {
-					InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-					BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+					chat.mensagens();
+					ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 
-					do{
-						chat.mensagens();
-					}while (bufferedReader.readLine() != null);
-				} catch (IOException ex) {
+					while (input.readObject() != null) {
+						if (input.readObject() instanceof Mensagem) {
+							Mensagem mensagem = (Mensagem) input.readObject();
+							MensagensDao.getInstance().create(mensagem);
+							chat.mensagens();
+						}
+						if (input.readObject() instanceof Arquivo) {
+							byte[] objectAsByte = new byte[socket.getReceiveBufferSize()];
+							BufferedInputStream bf = new BufferedInputStream(socket.getInputStream());
+							bf.read(objectAsByte);
+							Arquivo arquivo = (Arquivo) getObjectFromByte(objectAsByte);
+							String dir = arquivo.getDiretorioDestino().endsWith("/")
+									? arquivo.getDiretorioDestino() + arquivo.getNome()
+									: arquivo.getDiretorioDestino() + "/" + arquivo.getNome();
+							FileOutputStream fos = new FileOutputStream(dir);
+							fos.write(arquivo.getConteudo());
+							fos.close();
+						}
+					}
+				} catch (IOException | ClassNotFoundException ex) {
 					showMessageDialog(null, "Erro na conexão com o servidor", "", ERROR_MESSAGE);
 				}
 			}
@@ -63,6 +85,25 @@ public class ClienteController {
 		});
 		thread.start();
 	}
+	
+	private Object getObjectFromByte(byte[] objectAsByte) {
+		Object obj = null;
+		ByteArrayInputStream bis = null;
+		ObjectInputStream ois = null;
+		try {
+			bis = new ByteArrayInputStream(objectAsByte);
+			ois = new ObjectInputStream(bis);
+			obj = ois.readObject();
+
+			bis.close();
+			ois.close();
+
+		} catch (ClassNotFoundException |IOException e) {
+			e.printStackTrace();
+		}
+		return obj;
+	}
+
 
 	/**
 	 * @return the chat

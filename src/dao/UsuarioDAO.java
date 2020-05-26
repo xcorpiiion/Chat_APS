@@ -11,9 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Usuario;
 
 /**
@@ -64,12 +64,52 @@ public class UsuarioDAO implements Persistencia<Usuario> {
 
 	@Override
 	public List<Usuario> read() {
-		throw new UnsupportedOperationException("Not supported yet."); // não será implementado devido a falta de necessidade
+		String sql = "select * from Usuario";
+		Connection con = ConnectionFactory.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		List<Usuario> lista = new ArrayList<>();
+		try {
+			pst = con.prepareStatement(sql);
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				String nome = rs.getString("Nome");
+				int equipe = rs.getInt("Equipe");
+				String senha = rs.getString("Senha");
+				Usuario usuario = new Usuario(nome, equipe, senha);
+				lista.add(usuario);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			ConnectionFactory.closeConnection(con, pst);
+		}
+		return lista;
 	}
 
 	@Override
 	public boolean update(Usuario r) {
-		throw new UnsupportedOperationException("Not supported yet."); // não será implementado devido a falta de necessidade
+		String sql = "update Usuario" + "set Senha=?" + "where Nome=? and Equipe=?";
+		Connection con = ConnectionFactory.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		boolean atualizado = false;
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setString(1, r.getSenha());
+			pst.setString(2, r.getNome());
+			pst.setInt(3, r.getEquipe());
+			pst.executeUpdate();
+			rs = pst.getGeneratedKeys();
+			if (rs.next()) {
+				atualizado = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			ConnectionFactory.closeConnection(con, pst);
+		}
+		return atualizado;
 	}
 
 	@Override
