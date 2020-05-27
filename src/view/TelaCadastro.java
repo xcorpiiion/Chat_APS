@@ -6,7 +6,6 @@
 package view;
 
 import dao.UsuarioDAO;
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 import static javax.swing.JOptionPane.showMessageDialog;
 import model.Usuario;
