@@ -1,16 +1,12 @@
 
 package view;
 
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
-import static javax.swing.JOptionPane.showMessageDialog;
-
 import java.awt.event.KeyEvent;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 
+import cliente.Cliente;
+import commons.Acoes;
 import dao.MensagensDao;
 import model.Mensagem;
 
@@ -22,9 +18,14 @@ public class Chat extends javax.swing.JFrame {
 
 	private String nome;
 	private Socket socket;
+	private Cliente cliente;
+	String connectionInfo;
 
-	public Chat() {
+	public Chat(Socket connection, String connectionInfo) {
 		initComponents();
+		this.socket = connection;
+		this.connectionInfo = connectionInfo;
+		cliente = new Cliente(this);
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Generated
@@ -180,12 +181,10 @@ public class Chat extends javax.swing.JFrame {
 	}// GEN-LAST:event_btEnviarActionPerformed
 
 	private void btSairActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btSairActionPerformed
-		try {
-			getSocket().close();
-			System.exit(0);
-		} catch (IOException ex) {
-		}
-	}// GEN-LAST:event_btSairActionPerformed
+		Acoes.enviarMensagem(socket, "QUIT");
+		cliente.setRunning(false);
+		System.exit(0);	
+		}// GEN-LAST:event_btSairActionPerformed
 
 	private void jbAnexoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbAnexoActionPerformed
 		Anexo anexo = new Anexo();
@@ -196,18 +195,12 @@ public class Chat extends javax.swing.JFrame {
 
 	private void enviarMensagem() {
 		String mensagem = null;
-		try {
-			ObjectOutputStream output = new ObjectOutputStream(getSocket().getOutputStream());
-			mensagem = txMensagemEnviar.getText();
-			Mensagem message = new Mensagem(mensagem, getNome());
-			MensagensDao.getInstance().create(message);
-			output.writeObject(message);
-			output.flush();
-			txMensagemEnviar.setText("");
-			mensagens();
-		} catch (IOException ex) {
-			showMessageDialog(null, "Mensagem não foi enviada", "", ERROR_MESSAGE);
-		}
+		mensagem = txMensagemEnviar.getText();
+		Mensagem message = new Mensagem(mensagem, getNome());
+		MensagensDao.getInstance().create(message);
+		Acoes.enviarMensagem(socket, mensagem);
+		txMensagemEnviar.setText("");
+		mensagens();
 	}
 
 	public void mensagens() {

@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 
-import util.TransformarArquivo;
+import commons.TransformarArquivo;
 
 /**
  *
@@ -66,7 +66,7 @@ public class Anexo extends javax.swing.JFrame {
     private void fcAnexoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fcAnexoActionPerformed
 		if (evt.getActionCommand().equals("ApproveSelection")) {
 			File file = fcAnexo.getSelectedFile();
-            byte[] arquivo = new TransformarArquivo().transformar(file);
+            byte[] arquivo = new TransformarArquivo().transformarParaEnvio(file, socket);
             BufferedOutputStream output;
     		try {
     			output = new BufferedOutputStream(getSocket().getOutputStream());
@@ -78,7 +78,7 @@ public class Anexo extends javax.swing.JFrame {
     		}
 		}
 		if (evt.getActionCommand().equals("CancelSelection")) {
-			//Comando para fechar a janela de anexo
+			this.dispose();
 		}
     }//GEN-LAST:event_fcAnexoActionPerformed
     

@@ -1,60 +1,65 @@
 package servidor;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import cliente.Cliente;
-import controller.ServidorController;
-/**
- *
- * @author Lais
- */
-public class Servidor{
-    
-    private int porta;
-    
-    public Servidor(int porta){
-        setPorta(porta);
-    }
-           
-        public void rodarServer(){
-            //String mensagemRecebida;
-            ArrayList <ObjectOutputStream> clientes = new ArrayList<>();
-            try{
-            ServerSocket soc = new ServerSocket (this.porta);
-            Socket socket;
-            
-            
-                while(true){
-                    socket = soc.accept();      
-                       clientes.add(new ObjectOutputStream(socket.getOutputStream()));
-                       Cliente cliente = new Cliente(clientes);
-                       ServidorController controller = new ServidorController();
-                       controller.threadServidor(socket, cliente);                      
-                }
-            } catch (IOException ex){
-                ex.printStackTrace();
-            
-            }
-     }
+import commons.Acoes;
 
-    /**
-     * @return the porta
-     */
-    public int getPorta() {
-        return porta;
-    }
+public class Servidor {
 
-    /**
-     * @param porta the porta to set
-     */
-    public void setPorta(int porta) {
-        this.porta = porta;
-    }
-    }
-    
-   
+	public static final String HOST= "127.0.0.1";
+	public static final int PORTA=8080;
+	
+	private ServerSocket server;
+	private Map<String, ClienteListerner> clientes;
+	
+	public Servidor() {
+		try {
+			String infoConexao;
+			clientes = new HashMap<>();
+			server = new ServerSocket(PORTA);
+			while(true) {
+				Socket socket = server.accept();
+				infoConexao = Acoes.receberMensagem(socket);
+				if(checkLogin(infoConexao)) {
+					ClienteListerner cl = new ClienteListerner(infoConexao, socket, this);
+					clientes.put(infoConexao, cl);
+					Acoes.enviarMensagem(socket, "SUCESS");
+					new Thread(cl).start();
+				}else {
+					Acoes.enviarMensagem(socket, "Erro");
+				}
+			}
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private boolean checkLogin(String infoConexao) {
+		String[] splited = infoConexao.split(":");
+		for(Map.Entry<String, ClienteListerner> pair : clientes.entrySet()) {
+			String[] parts = pair.getKey().split(":");
+			if(parts[0].toLowerCase().equals(splited[0].toLowerCase())) {
+				return false;
+			}else if((parts[1] + parts[2]).equals(splited[1] + splited[2])) {
+				return false;
+			}
+		}
+		return true;
+	}
 
+	public Map<String, ClienteListerner> getClientes() {
+		return clientes;
+	}
+
+	public void setClientes(Map<String, ClienteListerner> clientes) {
+		this.clientes = clientes;
+	}
+	
+	public static void main(String[] args) {
+		 new Servidor();
+	}
+}

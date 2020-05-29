@@ -25,7 +25,8 @@ public class ConnectionFactory {
             Connection con = DriverManager.getConnection(URLSQLITE);
             return con;
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println("Erro na conexão");
+        	e.printStackTrace();
             return null;
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ConnectionFactory.class.getName()).log(Level.SEVERE, null, ex);

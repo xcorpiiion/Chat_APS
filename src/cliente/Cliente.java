@@ -1,58 +1,43 @@
 package cliente;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-import model.Arquivo;
-import model.Mensagem;
+import commons.Porta;
+import view.Chat;
 
-/**
- *
- * 
- */
 public class Cliente {
 
-	private ArrayList<ObjectOutputStream> clientes;
-
-	public Cliente() {
-	}
-
-	public Cliente(ArrayList<ObjectOutputStream> clientes) {
-		setClientes(clientes);
-	}
-
-	public void enviarMensagem(Mensagem mensagem) {
-
-		for (ObjectOutputStream cliente : getClientes()) {
-			try {
-				cliente.writeObject(mensagem);
-				cliente.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
+	private boolean running;
+	private ServerSocket server;
+	
+	public Cliente(Chat chat) {
+		
+		new Thread() {
+			@Override
+			public void run() {
+				setRunning(true);
+				try {
+					server = new ServerSocket(Porta.getPorta());
+					while (isRunning()) {
+						Socket connection = server.accept();
+						ClienteListerner cl = new ClienteListerner(chat, connection);
+						cl.setChatOpen(true);
+						new Thread(cl).start();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-		}
+		}.start();
 	}
 
-	public void enviarArquivo(Arquivo arquivo) {
-		for (ObjectOutputStream cliente : getClientes()) {
-			try {
-				cliente.writeObject(arquivo);
-				cliente.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+	public boolean isRunning() {
+		return running;
 	}
 
-	// @return the clientes
-	public ArrayList<ObjectOutputStream> getClientes() {
-		return clientes;
+	public void setRunning(boolean running) {
+		this.running = running;
 	}
-
-	// @param clientes the clientes to set
-	public void setClientes(ArrayList<ObjectOutputStream> clientes) {
-		this.clientes = clientes;
-	}
-
 }
