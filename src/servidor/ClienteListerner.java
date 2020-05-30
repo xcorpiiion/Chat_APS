@@ -37,6 +37,7 @@ public class ClienteListerner implements Runnable{
 			}else if(mensagem.equals("GET_CONNECTED_USERS")) {
 				String resposta = "";
 				for(Map.Entry<String, ClienteListerner> pair : getServidor().getClientes().entrySet()) {
+					System.out.println("Solicitação para atualizar clientes");
 					resposta += (pair.getKey() + ";");
 				}
 				Acoes.enviarMensagem(socket, resposta);

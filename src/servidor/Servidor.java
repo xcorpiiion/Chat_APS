@@ -21,6 +21,7 @@ public class Servidor {
 			String infoConexao;
 			clientes = new HashMap<>();
 			server = new ServerSocket(PORTA);
+			System.out.println("Servidor iniciado no Host: " + HOST + " e na porta: " + PORTA);
 			while(true) {
 				Socket socket = server.accept();
 				infoConexao = Acoes.receberMensagem(socket);

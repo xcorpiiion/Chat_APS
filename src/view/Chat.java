@@ -5,8 +5,8 @@ import java.awt.event.KeyEvent;
 import java.net.Socket;
 import java.util.List;
 
-import cliente.Cliente;
 import commons.Acoes;
+import controller.ChatController;
 import dao.MensagensDao;
 import model.Mensagem;
 
@@ -17,15 +17,18 @@ import model.Mensagem;
 public class Chat extends javax.swing.JFrame {
 
 	private String nome;
+	private ChatController chatController;
 	private Socket socket;
-	private Cliente cliente;
-	String connectionInfo;
+	private String connectionInfo;
+	private int porta;
 
-	public Chat(Socket connection, String connectionInfo) {
+	public Chat(ChatController chatController, Socket connection, String connectionInfo) {
 		initComponents();
 		this.socket = connection;
 		this.connectionInfo = connectionInfo;
-		cliente = new Cliente(this);
+		this.chatController = chatController;
+		this.setVisible(true);
+		mensagens();
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Generated
@@ -182,9 +185,11 @@ public class Chat extends javax.swing.JFrame {
 
 	private void btSairActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btSairActionPerformed
 		Acoes.enviarMensagem(socket, "QUIT");
-		cliente.setRunning(false);
-		System.exit(0);	
-		}// GEN-LAST:event_btSairActionPerformed
+		chatController.getConnectedListerner().get(connectionInfo).setChatOpen(false);
+		chatController.getConnectedListerner().get(connectionInfo).setRunning(false);
+		chatController.getConnectedListerner().remove(connectionInfo);
+		Acoes.close();
+	}// GEN-LAST:event_btSairActionPerformed
 
 	private void jbAnexoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbAnexoActionPerformed
 		Anexo anexo = new Anexo();
@@ -197,9 +202,10 @@ public class Chat extends javax.swing.JFrame {
 		String mensagem = null;
 		mensagem = txMensagemEnviar.getText();
 		Mensagem message = new Mensagem(mensagem, getNome());
-		MensagensDao.getInstance().create(message);
-		Acoes.enviarMensagem(socket, mensagem);
+		// MensagensDao.getInstance().create(message);
+		Acoes.enviarMensagem(socket, message);
 		txMensagemEnviar.setText("");
+		Acoes.receberMensagem(socket);
 		mensagens();
 	}
 
@@ -250,6 +256,14 @@ public class Chat extends javax.swing.JFrame {
 	 */
 	public void setSocket(Socket socket) {
 		this.socket = socket;
+	}
+
+	public int getPorta() {
+		return porta;
+	}
+
+	public void setPorta(int porta) {
+		this.porta = porta;
 	}
 
 }

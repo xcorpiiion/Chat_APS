@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.net.Socket;
 
 import commons.Acoes;
+import commons.Porta;
+import controller.ChatController;
 import dao.UsuarioDAO;
 import model.Usuario;
 import servidor.Servidor;
@@ -261,14 +263,19 @@ public class Inicio extends javax.swing.JFrame {
 				Integer.valueOf(tfEquipe.getText()));
 		if (verificaUsuario(usuario)) {
 			try {
+				int porta = Porta.getPorta();
 				Socket connection = new Socket(Servidor.HOST, Servidor.PORTA);
-				String connectionInfo = (usuario.getNome() + connection.getLocalAddress().getHostAddress() + ":8080");
+				String connectionInfo = (usuario.getNome() + connection.getLocalAddress().getHostAddress() + porta);
 				Acoes.enviarMensagem(connection, connectionInfo);
 				if (Acoes.receberMensagem(connection).equals("SUCESS")) {
-					Chat chat = new Chat(connection, connectionInfo);
-					chat.setVisible(true);
-					chat.setNome(usuario.getNome());
+					ChatController chatController = new ChatController(connection, connectionInfo);
+//					Chat chat = new Chat(connection, connectionInfo);
+//					chat.setVisible(true);
+//					chat.setNome(usuario.getNome());
+//					chat.setPorta(porta);
 					this.dispose();
+				}else {
+					showMessageDialog(null, "Ocorreu um erro na conexão, favor tentar novamente","", ERROR_MESSAGE);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

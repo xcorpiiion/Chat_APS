@@ -16,6 +16,7 @@ public class Acoes {
 			ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 			output.flush();
 			output.writeObject(mensagem);
+			output.reset();
 			return true;
 		} catch (IOException e) {
 			try {
@@ -28,26 +29,29 @@ public class Acoes {
 		}
 		return false;
 	}
-	
+
 	public static String receberMensagem(Socket socket) {
-		String resposta =null;
 		try {
 			ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-			if(input.readObject() instanceof String) {
-				resposta = (String) input.readObject();
-			}
-			if(input.readObject() instanceof Mensagem) {
+			if (input.readObject() instanceof Mensagem) {
 				Mensagem mensagem = (Mensagem) input.readObject();
 				MensagensDao.getInstance().create(mensagem);
-				resposta = mensagem.toString();
-			}
-			if(input.readObject() instanceof Anexo) {
+				return mensagem.toString();
+			} else if (input.readObject() instanceof Anexo) {
 				new TransformarArquivo().transformarParaReceber(socket);
-				resposta = "ANEXO_ENVIADO";
+				return "ANEXO_ENVIADO";
+			} else if (input.readObject() instanceof String) {
+				return (String) input.readObject();
+			} else {
+				return null;
 			}
-		}catch(IOException | ClassNotFoundException e) {
+		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
+			return null;
 		}
-		return resposta;
+	}
+
+	public static void close() {
+		System.exit(0);
 	}
 }

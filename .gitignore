@@ -117,3 +117,16 @@ build/classes/view/TelaCadastro.class
 build/classes/view/TelaCadastro.form
 nbproject/private/private.properties
 nbproject/private/private.xml
+build/classes/cliente/Cliente$1.class
+build/classes/cliente/ClienteListerner.class
+build/classes/commons/Acoes.class
+build/classes/controller/ChatController$1.class
+build/classes/controller/ChatController.class
+build/classes/servidor/ClienteListerner.class
+build/classes/view/Chat$1.class
+build/classes/view/Chat$2.class
+build/classes/view/Chat$3.class
+build/classes/view/Chat.class
+build/classes/view/Inicio$2.class
+build/classes/view/Inicio$3.class
+build/classes/view/Inicio$4.class

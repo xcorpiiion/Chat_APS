@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 import commons.Acoes;
+import controller.ChatController;
 import view.Chat;
 
 public class ClienteListerner implements Runnable {
@@ -13,14 +14,22 @@ public class ClienteListerner implements Runnable {
 	private Socket socket;
 	private Chat chat;
 	private String connectionInfo;
+	private ChatController chatController;
 
-	public ClienteListerner(Chat chat, Socket socket) {
+	public ClienteListerner(ChatController chatController,Chat chat, Socket socket) {
 		this.running = false;
 		this.chatOpen = false;
 		this.socket = socket;
 		this.chat = chat;
+		this.chatController = chatController;
 		this.connectionInfo = null;
 	}
+
+	public ClienteListerner(ChatController chatController, Socket socket) {
+		this.socket = socket;
+		this.chatController = chatController;
+	}
+
 
 	@Override
 	public void run() {
@@ -31,6 +40,7 @@ public class ClienteListerner implements Runnable {
 			chat.mensagens();
 			if (message == null || message.equals("CHAT_CLOSE") || !message.equals("ANEXO_ENVIADO")) {
 				if (chatOpen) {
+					chatController.getConnectedListerner().remove(connectionInfo);
 					setChatOpen(false);
 					try {
 						socket.close();
@@ -41,17 +51,21 @@ public class ClienteListerner implements Runnable {
 				}
 				setRunning(false);
 			} else {
-				String[] fields = message.split(":");
+				String[] fields = message.split(";");
 				if (fields.length > 1) {
 					if (fields[0].equals("OPEN CHAT")) {
 						String[] splited = fields[1].split(":");
 						String connectionInfo = fields[1];
 						if (!isChatOpen()) {
+							chatController.getConnectedListerner().put(connectionInfo, this);
 							setChatOpen(true);
-							setChat(new Chat(socket, connectionInfo));
+							setChat(new Chat(chatController,socket, connectionInfo));
 						}
+					}else {
+						getChat().mensagens();
 					}
 				}
+			System.out.println("Mensagem: " + message);
 			}
 		}
 	}
