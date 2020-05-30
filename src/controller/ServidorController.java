@@ -17,6 +17,7 @@ import dao.MensagensDao;
 import model.Arquivo;
 import model.Mensagem;
 import servidor.Servidor;
+import view.Chat;
 
 /**
  *
@@ -41,6 +42,7 @@ public class ServidorController {
 							Mensagem mensagem = (Mensagem) input.readObject();
 							MensagensDao.getInstance().create(mensagem);
 							cliente.enviarMensagem(mensagem);
+							Chat.mensagens();
 						}
 						if (input.readObject() instanceof Arquivo) {
 							byte[] objectAsByte = new byte[socket.getReceiveBufferSize()];
@@ -80,6 +82,10 @@ public class ServidorController {
 			e.printStackTrace();
 		}
 		return obj;
+	}
+	
+	public static void close() {
+		System.exit(0);
 	}
 
 }

@@ -18,6 +18,7 @@ import java.net.Socket;
 import dao.MensagensDao;
 import model.Arquivo;
 import model.Mensagem;
+import util.Porta;
 import view.Chat;
 import view.Inicio;
 

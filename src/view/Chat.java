@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 
+import controller.ServidorController;
 import dao.MensagensDao;
 import model.Mensagem;
 
@@ -182,7 +183,7 @@ public class Chat extends javax.swing.JFrame {
 	private void btSairActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btSairActionPerformed
 		try {
 			getSocket().close();
-			System.exit(0);
+			ServidorController.close();
 		} catch (IOException ex) {
 		}
 	}// GEN-LAST:event_btSairActionPerformed
@@ -200,9 +201,9 @@ public class Chat extends javax.swing.JFrame {
 			ObjectOutputStream output = new ObjectOutputStream(getSocket().getOutputStream());
 			mensagem = txMensagemEnviar.getText();
 			Mensagem message = new Mensagem(mensagem, getNome());
-			MensagensDao.getInstance().create(message);
 			output.writeObject(message);
 			output.flush();
+			//MensagensDao.getInstance().create(message);
 			txMensagemEnviar.setText("");
 			mensagens();
 		} catch (IOException ex) {
@@ -210,7 +211,7 @@ public class Chat extends javax.swing.JFrame {
 		}
 	}
 
-	public void mensagens() {
+	public static void mensagens() {
 		List<Mensagem> mensagens = MensagensDao.getInstance().read();
 		txMensagemRecebida.setText("");
 		for (Mensagem mensagem : mensagens) {
@@ -228,7 +229,7 @@ public class Chat extends javax.swing.JFrame {
 	private javax.swing.JScrollPane psMenagemRecebida;
 	private javax.swing.JScrollPane psMensagemEnviar;
 	private javax.swing.JTextArea txMensagemEnviar;
-	private javax.swing.JTextArea txMensagemRecebida;
+	private static javax.swing.JTextArea txMensagemRecebida;
 	// End of variables declaration//GEN-END:variables
 
 	/**

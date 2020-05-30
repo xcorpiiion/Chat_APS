@@ -78,7 +78,7 @@ public class Anexo extends javax.swing.JFrame {
     		}
 		}
 		if (evt.getActionCommand().equals("CancelSelection")) {
-			//Comando para fechar a janela de anexo
+			this.dispose();
 		}
     }//GEN-LAST:event_fcAnexoActionPerformed
     

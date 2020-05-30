@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import cliente.Cliente;
 import controller.ServidorController;
+import view.Chat;
 /**
  *
  * @author Lais
@@ -33,7 +34,8 @@ public class Servidor{
                        clientes.add(new ObjectOutputStream(socket.getOutputStream()));
                        Cliente cliente = new Cliente(clientes);
                        ServidorController controller = new ServidorController();
-                       controller.threadServidor(socket, cliente);                      
+                       controller.threadServidor(socket, cliente);
+                       Chat.mensagens();
                 }
             } catch (IOException ex){
                 ex.printStackTrace();
